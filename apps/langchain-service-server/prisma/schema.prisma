@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ProcessedChunk {
+  chunk     String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  order     Int?
+  updatedAt DateTime @updatedAt
+}
+
+model BotInteraction {
+  createdAt       DateTime  @default(now())
+  id              String    @id @default(cuid())
+  interactionTime DateTime?
+  message         String?
+  response        String?
+  updatedAt       DateTime  @updatedAt
+  user            User?     @relation(fields: [userId], references: [id])
+  userId          String?
+}
+
+model TrainingData {
+  content   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  source    String?
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  botInteractions BotInteraction[]
+  createdAt       DateTime         @default(now())
+  email           String?          @unique
+  firstName       String?
+  id              String           @id @default(cuid())
+  lastName        String?
+  password        String
+  roles           Json
+  updatedAt       DateTime         @updatedAt
+  username        String           @unique
+}
